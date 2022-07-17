@@ -13,8 +13,6 @@ if SHIELD_PTERON36_LEFT || SHIELD_PTERON36_RIGHT
 config ZMK_SPLIT
     default y
 
-endif
-
 if ZMK_DISPLAY
 
 config I2C
@@ -50,3 +48,5 @@ choice LVGL_COLOR_DEPTH
 endchoice
 
 endif # LVGL
+
+endif
