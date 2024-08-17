@@ -1,154 +1,161 @@
+/*
+ * Copyright (c) 2020 The ZMK Contributors
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
-#include <dt-bindings/zmk/ext_power.h>
 #include <dt-bindings/zmk/outputs.h>
+ 
+#define CMK 0
+#define QRT 1
+#define SYM 2
+#define NUM 3
+#define NAV 4
+#define FUN 5
+#define DAN 6
+#define LCK 7
 
-#define BASE 0
-#define NAVR 1
-#define MOUR 2
-#define MEDR 3
-#define NSL 4
-#define NSSL 5
-#define FUNL 6
+&caps_word {
+   continue-list = <UNDERSCORE MINUS BACKSPACE>;
+};
+
 
 / {
-	behaviors {
-        hm: homerow_mods {
-            compatible = "zmk,behavior-hold-tap";
-            label = "HOMEROW_MODS";
-            #binding-cells = <2>;
-            tapping-term-ms = <200>;
-            quick_tap_ms = <0>;
-            flavor = "tap-preferred";
-            bindings = <&kp>, <&kp>;
+
+    combos {
+        #include "combos.dtsi"    
+    };
+
+    behaviors {
+        skq: sticky_key_quick_release {
+            compatible = "zmk,behavior-sticky-key";
+            label = "STICKY_KEY_QUICK_RELEASE";
+            #binding-cells = <1>;
+            bindings = <&kp>;
+            release-after-ms = <1000>;
+            quick-release;
         };
     };
-	keymap {
-		compatible = "zmk,keymap";
+};
 
-		default_layer {
-// ------------------------------------------------------------------------------------------------------------
-// |  ESC  |  1  |  2  |  3   |  4   |  5   |                   |  6   |  7    |  8    |  9   |   0   |   `   |
-// |  TAB  |  Q  |  W  |  E   |  R   |  T   |                   |  Y   |  U    |  I    |  O   |   P   |   -   |
-// |  CTRL |  A  |  S  |  D   |  F   |  G   |                   |  H   |  J    |  K    |  L   |   ;   |   '   |
-// | SHIFT |  Z  |  X  |  C   |  V   |  B   |   "["  |  |  "]"  |  N   |  M    |  ,    |  .   |   /   | SHIFT |
-//                     | ALT  | GUI  | LOWER|  SPACE |  | ENTER | RAISE| BSPC  | GUI   |
-			bindings = <
-										                																					
-	&kp Q  		&kp W 		&kp E		&kp R			&kp T                     							&kp Y		&kp U			&kp I			&kp O		&kp P			
-	&hm LGUI A	&hm LALT S	&hm LCTRL D	&hm LSHFT F		&kp G 	                   							&kp H		&hm RSHFT  J	&hm LCTRL  K		&hm RALT  L	&hm RGUI  APOS	
-	&kp Z		&kp X		&kp C		&kp V			&kp B										&kp N		&kp M 			&kp COMMA	&kp DOT	&kp FSLH	
-                						&lt MEDR ESC	&lt NAVR SPACE 		&lt MOUR TAB 	&lt NSSL RET	&lt NSL BSPC	&lt FUNL DEL 
-			>;
+/*           34 Keys
+╭──────────────╮ ╭──────────────╮
+│ 0  1  2  3  4│ │ 5  6  7  8  9│
+│10 11 12 13 14│ │15 16 17 18 19│
+│20 21 22 23 24│ │25 26 27 28 29│
+╰────────╮30 31│ │32 33╭────────╯
+         ╰─────╯ ╰─────╯         */
 
-			
-		};
 
-		navr_layer {
-// ------------------------------------------------------------------------------------------------------------
-// | BTCLR | BT1 | BT2 |  BT3 |  BT4 |  BT5 |                   |      |       |       |      |       |       |
-// |  F1   |  F2 |  F3 |  F4  |  F5  |  F6  |                   |  F7  |  F8   |  F9   |  F10 |  F11  |  F12  |
-// |   `   |  !  |  @  |  #   |  $   |  %   |                   |  ^   |  &    |  *    |  (   |   )   |   ~   |
-// |       |     |     |      |      |      |        |  |       |      |  _    |  +    |  {   |   }   |  "|"  |
-//                     |      |      |      |        |  |       |      |       |       |
-			bindings = <
-
-	&trans	&trans	&trans	&trans	&trans					&kp C_AC_REDO	&kp C_AC_PASTE	&kp C_AC_COPY	&kp C_AC_CUT	&kp C_AC_UNDO	
-	&trans	&trans	&trans	&trans	&trans					&kp CAPS	&kp LEFT		&kp DOWN		&kp UP			&kp RIGHT		
-	&trans	&trans	&trans	&trans	&trans	            	&kp INS		&kp HOME		&kp PG_DN		&kp PG_UP		&kp END			
-                                &trans	&trans	&trans	&trans	&trans	&trans
-			>;
-
-			
-		};
-
-		mour_layer {
-// ------------------------------------------------------------------------------------------------------------
-// |       |     |     |      |      |      |                   |      |       |       |      |       |       |
-// |   `   |  1  |  2  |  3   |  4   |  5   |                   |  6   |   7   |   8   |  9   |   0   |       |
-// |   F1  |  F2 |  F3 |  F4  |  F5  |  F6  |                   |      |   <-  |   ^   |  v   |  ->   |       |
-// |   F7  |  F8 |  F9 |  F10 |  F11 |  F12 |        |  |       |  +   |   -   |   =   |  [   |   ]   |   \   |
-//                     |      |      |      |        |  |       |      |       |       |
-			bindings = <
-	&kp F12	&kp	F7	&kp F8	&kp F9	&kp	PSCRN						&trans	&trans	&trans	&trans	&trans	
-	&kp	F11	&kp	F4	&kp F5	&kp F6	&kp	SLCK						&trans	&trans	&trans	&trans	&trans	
-	&kp	F10	&kp F1	&kp F2	&kp F3	&kp PAUSE_BREAK	            	&trans	&trans	&trans	&trans	&trans	
-                        		&trans	&trans	&trans	&trans	&trans	&trans	
-			>;
-
-			
-		};
-
-		medr_layer {
-// ------------------------------------------------------------------------------------------------------------
-// |       |     |     |      |      |      |                   |      |       |       |      |       |       |
-// |   `   |  1  |  2  |  3   |  4   |  5   |                   |  6   |   7   |   8   |  9   |   0   |       |
-// |   F1  |  F2 |  F3 |  F4  |  F5  |  F6  |                   |      |   <-  |   ^   |  v   |  ->   |       |
-// |   F7  |  F8 |  F9 |  F10 |  F11 |  F12 |        |  |       |  +   |   -   |   =   |  [   |   ]   |   \   |
-//                     |      |      |      |        |  |       |      |       |       |
-			bindings = <
-	&trans	&trans	&trans	&trans	&trans						&trans		&trans		&trans			&trans			&trans		
-	&trans	&trans	&trans	&trans	&trans						&trans		&kp C_PREV	&kp C_VOL_DN	&kp C_VOL_UP	&kp C_NEXT		
-	&trans	&trans	&trans	&trans	&trans              		&trans		&trans		&trans			&trans			&trans		
-                        	&trans	&trans	&trans	&kp C_STOP	&kp C_PP	&kp C_MUTE				
-			>;
-
-			
-		};
-
-		nsl_layer {
-// ------------------------------------------------------------------------------------------------------------
-// |       |     |     |      |      |      |                   |      |       |       |      |       |       |
-// |   `   |  1  |  2  |  3   |  4   |  5   |                   |  6   |   7   |   8   |  9   |   0   |       |
-// |   F1  |  F2 |  F3 |  F4  |  F5  |  F6  |                   |      |   <-  |   ^   |  v   |  ->   |       |
-// |   F7  |  F8 |  F9 |  F10 |  F11 |  F12 |        |  |       |  +   |   -   |   =   |  [   |   ]   |   \   |
-//                     |      |      |      |        |  |       |      |       |       |
-			bindings = <
-	&kp LBKT		&kp N7	&kp N8	&kp N9	&kp RBKT						&trans	&trans	&trans	&trans	&trans	
-	&kp SEMICOLON	&kp N4	&kp N5	&kp N6	&kp EQUAL						&trans	&trans	&trans	&trans	&trans	
-	&kp GRAVE		&kp N1	&kp N2	&kp N3	&kp BSLH	        			&trans	&trans	&trans	&trans	&trans	
-                    				&kp DOT	&kp N0		&kp MINUS	&trans	&trans	&trans	
-			>;
-
-			
-		};
-
-		nssl_layer {
-// ------------------------------------------------------------------------------------------------------------
-// |       |     |     |      |      |      |                   |      |       |       |      |       |       |
-// |   `   |  1  |  2  |  3   |  4   |  5   |                   |  6   |   7   |   8   |  9   |   0   |       |
-// |   F1  |  F2 |  F3 |  F4  |  F5  |  F6  |                   |      |   <-  |   ^   |  v   |  ->   |       |
-// |   F7  |  F8 |  F9 |  F10 |  F11 |  F12 |        |  |       |  +   |   -   |   =   |  [   |   ]   |   \   |
-//                     |      |      |      |        |  |       |      |       |       |
-			bindings = <
-	&kp LS(LBKT)		&kp LS(N7)	&kp LS(N8)	&kp LS(N9)	&kp LS(RBKT)					&trans	&trans	&trans	&trans	&trans	
-	&kp LS(SEMICOLON)	&kp LS(N4)	&kp LS(N5)	&kp LS(N6)	&kp LS(EQUAL)					&trans	&trans	&trans	&trans	&trans	
-	&kp LS(GRAVE)		&kp LS(N1)	&kp LS(N2)	&kp LS(N3)	&kp LS(BSLH)	            	&trans	&trans	&trans	&trans	&trans	
-                    				&kp LS(DOT)	&kp LS(N0)	&kp LS(MINUS)	&trans	&trans	&trans		
-			>;
-
-			
-		};
-
-		funl_layer {
-// ------------------------------------------------------------------------------------------------------------
-// |       |     |     |      |      |      |                   |      |       |       |      |       |       |
-// |   `   |  1  |  2  |  3   |  4   |  5   |                   |  6   |   7   |   8   |  9   |   0   |       |
-// |   F1  |  F2 |  F3 |  F4  |  F5  |  F6  |                   |      |   <-  |   ^   |  v   |  ->   |       |
-// |   F7  |  F8 |  F9 |  F10 |  F11 |  F12 |        |  |       |  +   |   -   |   =   |  [   |   ]   |   \   |
-//                     |      |      |      |        |  |       |      |       |       |
-			bindings = <
-
-	&kp F12	&kp	F7	&kp F8	&kp F9	&kp	PSCRN						&trans	&trans	&trans	&trans	&trans	
-	&kp	F11	&kp	F4	&kp F5	&kp F6	&kp	SLCK						&trans	&trans	&trans	&trans	&trans	
-	&kp	F10	&kp F1	&kp F2	&kp F3	&kp PAUSE_BREAK	            	&trans	&trans	&trans	&trans	&trans
-                       	        &kp K_APP	&kp SPACE	&kp TAB	&trans	&trans	&trans	
-			>;
-
-			
-		};
-
-	};
-
+/ {
+        keymap {
+                compatible = "zmk,keymap";
+                colemak_layer {
+// -----------------------------------------------------------------
+// |  Q  |  W  |  F  |  P  |  B  | |  J  |  L  |  U  |  Y  |     |
+// |  A  |  R  |  S  |  T  |  G  | |  M  |  N  |  E  |  I  |  O  |
+// |  Z  |  X  |  C  |  D  |  V  | |  K  |  H  |  ,  |  .  |-FUN-|
+//                   |-SYM-| SPC | | RET |-NUM-|
+                        bindings = <
+   &kp Q &kp W &kp F &kp P &kp B &kp J &kp L   &kp U     &kp Y   &none
+   &kp A &kp R &kp S &kp T &kp G &kp M &kp N   &kp E     &kp I   &kp O
+   &kp Z &kp X &kp C &kp D &kp V &kp K &kp H   &kp COMMA &kp DOT &mo FUN
+                   &mo SYM &kp SPACE &kp RET &mo NUM
+                        >;
+                };
+                qwerty_layer {
+// -----------------------------------------------------------------
+// |  Q  |  W  |  E  |  R  |  T  | |  Y  |  U  |  I  |  O  |  P  |
+// |  A  |  S  |  D  |  F  |  G  | |  H  |  J  |  K  |  L  |  ;  |
+// |  Z  |  X  |  C  |  V  |  B  | |  N  |  M  |  ,  |  .  |-FUN-|
+//                   |-SYM-| SPC | | RET |-NUM-|
+                        bindings = <
+   &kp Q &kp W &kp E &kp R &kp T &kp Y &kp U &kp I     &kp O   &kp P
+   &kp A &kp S &kp D &kp F &kp G &kp H &kp J &kp K     &kp L   &kp SEMI
+   &kp Z &kp X &kp C &kp V &kp B &kp N &kp M &kp COMMA &kp DOT &mo FUN
+                   &mo SYM &kp SPACE &kp RET &mo NUM
+                        >;
+                };
+                symbol_layer {
+// -----------------------------------------------------------------
+// |     |  \  |  %  |  $  |     | |     |  ^  |  {  |  }  |     |
+// |  *  |  (  |  )  |  :  |     | |     |  "  |  [  |  ]  |  ;  |
+// |     |  `  |  @  |  &  |     | |     |  #  |  <  |  >  | DEL |
+//                   |_SYM_| SPC | | RET | ESC |
+                        bindings = <
+   &none  &kp BSLH &kp PRCNT &kp DLLR  &none &none &kp CARET &kp LBRC &kp RBRC &none
+   &kp STAR &kp LPAR &kp RPAR  &kp COLON &none &none &kp DQT   &kp LBKT &kp RBKT &kp SEMI
+   &mo FUN  &kp GRAVE   &kp AT  &kp AMPS  &none &none &kp HASH &kp LT   &kp GT   &kp DEL
+                             &trans &kp SPACE &kp RET &kp ESC
+                        >;
+                };
+                number_layer {
+// -----------------------------------------------------------------
+// | BSPC |  9  |  8  |  7  |     | |     |  |  |  -  |  /  |     |
+// |  .   |  6  |  5  |  4  |     | |     |  '  |  _  |  =  |-NAV-|
+// |  ~   |  3  |  2  |  1  |     | |     |  +  |  ?  |  !  |     |
+//                   |  0  | SPC | | RET |_NUM_|
+                        bindings = <
+   &kp BSPC  &kp N9 &kp N8 &kp N7 &none &none &kp PIPE &kp MINUS &kp FSLH  &none
+   &kp DOT &kp N6 &kp N5 &kp N4 &none &none &kp SQT  &kp UNDER &kp EQUAL &mo NAV  
+   &kp TILDE  &kp N3 &kp N2 &kp N1 &none &none &kp PLUS &kp QMARK  &kp EXCL    &none
+                 &kp N0 &kp SPACE &kp RET  &trans
+                        >;
+                };
+                nav_layer {
+// -----------------------------------------------------------------
+// |     |     |     |     |     | |     |     |     |     |     |
+// |     |     |     |     |     | | LFT | DWN | U P |RIGHT|_NAV_|
+// |     |     |     |     |     | | HOM |PG_DN|PG_UP| END |     |
+//                   |     | SPC | | RET |_NUM_|
+                        bindings = <
+   &none &none &none &none &none &none    &none     &none     &none     &none 
+   &none &none &none &none &none &kp LEFT &kp DOWN  &kp UP    &kp RIGHT &trans  
+   &none &none &none &none &none &kp HOME &kp PG_DN &kp PG_UP &kp END   &none 
+                         &none &trans &trans &trans
+                        >;
+                };
+                fun_layer {
+// -----------------------------------------------------------------
+// |     | F 9 | F 8 | F 7 | F12 | | <!> | PLAY_PREV | PAUSE/PLAY | PLAY_NEXT |     |
+// |CAPSL| F 6 | F 5 | F 4 | F11 | | BT2 |VMUTE|VOLDN|VOLUP| <!> |
+// |-!!!-| F 3 | F 2 | F 1 | F10 | | BT0 | BT1 |BRIDN|BRIUP|_FUN_|
+//                   |     | SPC | | RET |     |
+                        bindings = <
+   &none &kp F9 &kp F8 &kp F7 &kp F12 &none &kp C_PREV &kp C_PP &kp C_NEXT &none
+   &kp CAPS &kp F6   &kp F4 &kp F1 &kp F11 &bt BT_SEL 2 &kp C_MUTE &kp C_VOL_DN &kp C_VOL_UP &none
+   &mo DAN &kp F3 &kp F1 &kp F7  &kp F10 &bt BT_SEL 0  &bt BT_SEL 1 &kp C_BRI_DN &kp C_BRI_UP &trans
+                         &none &trans &trans &none 
+                        >;
+                };
+                danger_layer {
+// -----------------------------------------------------------------
+// |     |RESET|     |     |     | |BTCLR| BLE | USB |RESET|     |
+// |BOOTL|     |     |     |     | |     |     |     |     |BOOTL|
+// |_!!!_|     |     |     |     | |     |     |     |     |_FUN_|
+//                   |     |     | |     |     |
+                    // impactful buttons
+                    // Bluetooth clear, reset, chaning BLE/USB preference, bootloader
+                    bindings = <
+&none &sys_reset &none &none &none &bt BT_CLR  &out OUT_BLE &out OUT_USB &sys_reset &none
+&bootloader &none &none &none &none &none &none &none &none &bootloader
+&trans &none &none &none &none &none &none &none &none &trans
+&none &none &none &none
+                    >;
+                };
+                lock_layer {
+                    // only way out is the lock combo
+                    // other combos are disabled too
+                    bindings = <
+&none &none &none &none &none &none &none &none &none &none 
+&none &none &none &none &none &none &none &none &none &none 
+&none &none &none &none &none &none &none &none &none &none 
+&none &none &none &none 
+                    >;
+                };
+        };
 };
